@@ -205,12 +205,3 @@ GET    /api/reports/daily-orders/export
 - React Router: Client-side routing
 - PHPUnit: Backend automated tests
 
-## Submission Notes
-
-Deliverables expected by the assignment:
-
-- Source code as a ZIP file or Git repository link
-- Database migrations and seeders
-- `README.md` with setup and run instructions
-- `architecture.md` with key design decisions and tradeoffs
-- Test instructions and test results
