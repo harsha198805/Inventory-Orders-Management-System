@@ -4,12 +4,14 @@ import { deleteProduct, getProducts } from '../api/productApi'
 import DataTable from '../components/DataTable'
 import ErrorMessage from '../components/ErrorMessage'
 import Loading from '../components/Loading'
+import Pagination from '../components/Pagination'
 import RoleGuard from '../components/RoleGuard'
 import { USER_ROLES } from '../utils/constants'
 
 function ProductsPage() {
   const [products, setProducts] = useState([])
-  const [filters, setFilters] = useState({ search: '', low_stock: false })
+  const [filters, setFilters] = useState({ search: '', low_stock: false, page: 1, per_page: 10 })
+  const [meta, setMeta] = useState(null)
   const [errors, setErrors] = useState({})
   const [loading, setLoading] = useState(true)
 
@@ -18,7 +20,10 @@ function ProductsPage() {
 
     getProducts(filters)
       .then((response) => {
-        if (active) setProducts(response.data)
+        if (active) {
+          setProducts(response.data)
+          setMeta(response.meta)
+        }
       })
       .catch(() => {
         if (active) setErrors({ general: ['Failed to load products.'] })
@@ -36,13 +41,18 @@ function ProductsPage() {
     try {
       const response = await getProducts(filters)
       setProducts(response.data)
+      setMeta(response.meta)
     } catch {
       setErrors({ general: ['Failed to load products.'] })
     }
   }, [filters])
 
   function handleFilter(nextFilters) {
-    setFilters(nextFilters)
+    setFilters({ ...nextFilters, page: 1 })
+  }
+
+  function handlePageChange(page) {
+    setFilters({ ...filters, page })
   }
 
   async function handleDelete(productId) {
@@ -103,6 +113,7 @@ function ProductsPage() {
           </RoleGuard>,
         ])}
       />
+      <Pagination meta={meta} onPageChange={handlePageChange} />
     </>
   )
 }

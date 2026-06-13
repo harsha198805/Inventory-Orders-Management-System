@@ -5,6 +5,7 @@ export async function getProducts(filters = {}) {
     params: {
       search: filters.search || undefined,
       low_stock: filters.low_stock ? 1 : undefined,
+      page: filters.page || undefined,
       per_page: filters.per_page || 50,
     },
   })

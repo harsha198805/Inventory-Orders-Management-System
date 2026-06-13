@@ -61,6 +61,7 @@
 }
 
 .workspace {
+  align-content: start;
   display: grid;
   gap: 22px;
   padding: 28px;
@@ -105,6 +106,7 @@
 
 .toolbar-form,
 .order-builder {
+  align-items: center;
   background: #ffffff;
   border: 1px solid #d8deea;
   border-radius: 8px;
