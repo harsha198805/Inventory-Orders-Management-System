@@ -1,59 +1,227 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Inventory Orders Management System - Backend
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Laravel API backend for a mini inventory and order management system. This backend handles authentication, role-based authorization, product stock management, order processing, and reports for the React frontend.
 
-## About Laravel
+## Features
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+- Laravel Sanctum API authentication
+- Admin and Staff user roles
+- Admin-only product create, update, and delete
+- Product listing with search, low-stock filter, sorting, and pagination
+- SKU uniqueness validation
+- Stock quantity and reorder level validation
+- Order creation with multiple products
+- Draft, Confirmed, and Cancelled order statuses
+- Transaction-safe stock reduction when confirming orders
+- Idempotent order confirmation to avoid duplicate stock reduction
+- Low stock report
+- Daily orders summary report
+- Feature tests for core business rules
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Tech Stack
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+- PHP 8.2+
+- Laravel 12
+- Laravel Sanctum
+- Eloquent ORM
+- MySQL or SQLite
+- PHPUnit
 
-## Learning Laravel
+## Requirements
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+- PHP 8.2 or later
+- Composer
+- MySQL through XAMPP, or SQLite for simple local setup
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+## Installation
 
-## Laravel Sponsors
+From the project root:
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+```bash
+cd backend
+composer install
+copy .env.example .env
+php artisan key:generate
+```
 
-### Premium Partners
+For XAMPP MySQL, update `backend/.env` like this:
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+```env
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=laravel_erp
+DB_USERNAME=root
+DB_PASSWORD=
+```
 
-## Contributing
+Create the `laravel_erp` database in phpMyAdmin before running migrations.
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+Then run:
 
-## Code of Conduct
+```bash
+php artisan migrate --seed
+```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+## Run Backend
 
-## Security Vulnerabilities
+```bash
+php artisan serve
+```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+Default backend URL:
 
-## License
+```text
+http://127.0.0.1:8000
+```
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+API base URL:
+
+```text
+http://127.0.0.1:8000/api
+```
+
+## Seeded Login Users
+
+```text
+Admin: admin@example.com / 12345678
+Staff: staff@example.com / 12345678
+```
+
+Admin users can manage products. Staff users can view products, create orders, and view reports, but cannot create, edit, or delete products.
+
+## API Endpoints
+
+### Authentication
+
+```text
+POST /api/login
+GET  /api/me
+POST /api/logout
+```
+
+### Products
+
+```text
+GET    /api/products
+POST   /api/products
+GET    /api/products/{product}
+PUT    /api/products/{product}
+DELETE /api/products/{product}
+```
+
+Product create, update, and delete routes require the `admin` role.
+
+Supported product listing query parameters:
+
+```text
+search
+low_stock
+sort_by
+sort_dir
+page
+per_page
+```
+
+### Orders
+
+```text
+GET  /api/orders
+POST /api/orders
+GET  /api/orders/{order}
+POST /api/orders/{order}/confirm
+POST /api/orders/{order}/cancel
+```
+
+### Reports
+
+```text
+GET /api/reports/low-stock
+GET /api/reports/daily-orders
+```
+
+## Example Login Request
+
+```bash
+curl -X POST http://127.0.0.1:8000/api/login ^
+  -H "Content-Type: application/json" ^
+  -d "{\"email\":\"admin@example.com\",\"password\":\"12345678\"}"
+```
+
+Use the returned token as a Bearer token for protected API requests.
+
+## Backend Structure
+
+```text
+backend/
++-- app/
+|   +-- Http/
+|   |   +-- Controllers/Api/
+|   |   +-- Requests/
+|   |   +-- Resources/
+|   |   `-- Middleware/
+|   +-- Models/
+|   +-- Services/
+|   +-- Repositories/
+|   `-- Enums/
++-- database/
+|   +-- migrations/
+|   `-- seeders/
++-- routes/
+|   `-- api.php
+`-- tests/
+    `-- Feature/
+```
+
+## Business Rules
+
+- Product SKU must be unique.
+- Stock quantity and reorder level must be non-negative integers.
+- Only Admin users can create, update, or delete products.
+- Orders are created as drafts.
+- Confirming an order reduces product stock inside a database transaction.
+- If stock is insufficient, the confirmation fails and stock remains unchanged.
+- Confirming an already confirmed order does not reduce stock again.
+- Cancelled orders cannot reduce stock.
+- Low stock means `stock_quantity <= reorder_level`.
+
+## Run Tests
+
+```bash
+php artisan test
+```
+
+Current feature coverage includes:
+
+- Admin can create products
+- Staff cannot create products
+- Product search and low-stock filtering
+- Order confirmation reduces stock
+- Insufficient stock rolls back confirmation
+- Re-confirming an order is idempotent
+- Low-stock and daily-order reports
+
+## Useful Commands
+
+```bash
+php artisan migrate:fresh --seed
+php artisan route:list
+php artisan test
+php artisan serve
+```
+
+## Frontend Connection
+
+The React frontend should use this API base URL:
+
+```env
+VITE_API_BASE_URL=http://127.0.0.1:8000/api
+```
+
+Run the frontend from the project root in a second terminal:
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
