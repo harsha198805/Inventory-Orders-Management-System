@@ -142,6 +142,13 @@
   padding: 16px;
 }
 
+.report-heading {
+  align-items: center;
+  display: flex;
+  gap: 12px;
+  justify-content: space-between;
+}
+
 .table-wrap {
   overflow-x: auto;
 }

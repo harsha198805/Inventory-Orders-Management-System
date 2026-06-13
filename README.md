@@ -72,6 +72,7 @@ backend/
 - Stock reduction inside a database transaction when an order is confirmed
 - Order listing with pagination and filters
 - Low stock report
+- Excel report exports
 - Daily orders summary with order count and total items
 - Consistent request validation and JSON error responses
 - Feature tests for key business rules
@@ -183,7 +184,9 @@ GET    /api/orders/{order}
 POST   /api/orders/{order}/confirm
 POST   /api/orders/{order}/cancel
 GET    /api/reports/low-stock
+GET    /api/reports/low-stock/export
 GET    /api/reports/daily-orders
+GET    /api/reports/daily-orders/export
 ```
 
 ## Third-Party Libraries

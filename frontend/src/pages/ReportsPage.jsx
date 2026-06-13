@@ -1,8 +1,19 @@
 import { useEffect, useState } from 'react'
-import { getDailyOrdersReport, getLowStockReport } from '../api/reportApi'
+import { downloadReportExcel, getDailyOrdersReport, getLowStockReport } from '../api/reportApi'
 import DataTable from '../components/DataTable'
 import ErrorMessage from '../components/ErrorMessage'
 import Loading from '../components/Loading'
+
+const reportConfig = {
+  'low-stock': {
+    columns: ['Product', 'SKU', 'Stock', 'Reorder'],
+    title: 'Low stock',
+  },
+  'daily-orders': {
+    columns: ['Date', 'Orders', 'Total items'],
+    title: 'Daily orders',
+  },
+}
 
 function ReportsPage() {
   const [activeReport, setActiveReport] = useState('low-stock')
@@ -29,6 +40,21 @@ function ReportsPage() {
 
     loadReports()
   }, [])
+
+  const activeRows = activeReport === 'low-stock'
+    ? lowStock.map((product) => [product.name, product.sku, product.stock_quantity, product.reorder_level])
+    : dailyOrders.map((row) => [row.order_date, row.order_count, row.total_items])
+  const activeConfig = reportConfig[activeReport]
+
+  async function handleExcelExport() {
+    setErrors({})
+
+    try {
+      await downloadReportExcel(activeReport)
+    } catch {
+      setErrors({ general: ['Failed to export Excel report.'] })
+    }
+  }
 
   return (
     <>
@@ -60,20 +86,30 @@ function ReportsPage() {
 
       {activeReport === 'low-stock' && (
         <section className="report-page">
-          <h3>Low stock</h3>
+          <div className="report-heading">
+            <h3>Low stock</h3>
+            <div className="row-actions">
+              <button className="secondary" onClick={handleExcelExport} type="button">Export Excel</button>
+            </div>
+          </div>
           <DataTable
-            columns={['Product', 'SKU', 'Stock', 'Reorder']}
-            rows={lowStock.map((product) => [product.name, product.sku, product.stock_quantity, product.reorder_level])}
+            columns={activeConfig.columns}
+            rows={activeRows}
           />
         </section>
       )}
 
       {activeReport === 'daily-orders' && (
         <section className="report-page">
-          <h3>Daily orders</h3>
+          <div className="report-heading">
+            <h3>Daily orders</h3>
+            <div className="row-actions">
+              <button className="secondary" onClick={handleExcelExport} type="button">Export Excel</button>
+            </div>
+          </div>
           <DataTable
-            columns={['Date', 'Orders', 'Total items']}
-            rows={dailyOrders.map((row) => [row.order_date, row.order_count, row.total_items])}
+            columns={activeConfig.columns}
+            rows={activeRows}
           />
         </section>
       )}

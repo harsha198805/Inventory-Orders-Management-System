@@ -15,6 +15,7 @@ Laravel API backend for a mini inventory and order management system. This backe
 - Transaction-safe stock reduction when confirming orders
 - Idempotent order confirmation to avoid duplicate stock reduction
 - Low stock report
+- Excel report export endpoints with Maatwebsite/Laravel-Excel
 - Daily orders summary report
 - Feature tests for core business rules
 
@@ -137,7 +138,9 @@ POST /api/orders/{order}/cancel
 
 ```text
 GET /api/reports/low-stock
+GET /api/reports/low-stock/export
 GET /api/reports/daily-orders
+GET /api/reports/daily-orders/export
 ```
 
 ## Example Login Request

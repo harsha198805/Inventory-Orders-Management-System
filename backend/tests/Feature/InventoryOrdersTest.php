@@ -130,6 +130,33 @@ class InventoryOrdersTest extends TestCase
             ->assertJsonPath('data.0.total_items', 3);
     }
 
+    public function test_report_exports_return_excel_downloads(): void
+    {
+        $staff = $this->user('staff');
+        $product = Product::create(['name' => 'Cable', 'sku' => 'CAB-001', 'stock_quantity' => 5, 'reorder_level' => 5]);
+        $order = Order::create([
+            'user_id' => $staff->id,
+            'order_number' => 'ORD-EXPORT',
+            'status' => OrderStatus::Confirmed,
+            'confirmed_at' => now(),
+        ]);
+        $order->items()->create(['product_id' => $product->id, 'quantity' => 2]);
+
+        $lowStockExport = $this->actingAs($staff, 'sanctum')
+            ->get('/api/reports/low-stock/export')
+            ->assertOk()
+            ->assertHeader('content-type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+
+        $this->assertStringContainsString('low-stock-report.xlsx', $lowStockExport->headers->get('content-disposition'));
+
+        $dailyOrdersExport = $this->actingAs($staff, 'sanctum')
+            ->get('/api/reports/daily-orders/export')
+            ->assertOk()
+            ->assertHeader('content-type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+
+        $this->assertStringContainsString('daily-orders-report.xlsx', $dailyOrdersExport->headers->get('content-disposition'));
+    }
+
     private function user(string $role): User
     {
         return User::create([

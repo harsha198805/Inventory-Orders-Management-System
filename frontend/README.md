@@ -12,6 +12,7 @@ React/Vite frontend for the Inventory Orders Management System. This app provide
 - Order listing with status actions
 - Create draft orders with multiple product lines
 - Low stock report
+- Excel report export controls
 - Daily orders summary report
 - API validation error display
 - Responsive dashboard layout

@@ -27,5 +27,7 @@ Route::middleware('auth:sanctum')->group(function (): void {
     Route::post('/orders/{order}/cancel', [OrderController::class, 'cancel']);
 
     Route::get('/reports/low-stock', [ReportController::class, 'lowStock']);
+    Route::get('/reports/low-stock/export', [ReportController::class, 'exportLowStock']);
     Route::get('/reports/daily-orders', [ReportController::class, 'dailyOrders']);
+    Route::get('/reports/daily-orders/export', [ReportController::class, 'exportDailyOrders']);
 });
