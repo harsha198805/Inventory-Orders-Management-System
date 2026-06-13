@@ -121,8 +121,8 @@ VITE_API_BASE_URL=http://127.0.0.1:8000/api
 Seeded users:
 
 ```text
-Admin: admin@example.com / password
-Staff: staff@example.com / password
+Admin: admin@example.com / 12345678
+Staff: staff@example.com / 12345678
 ```
 
 ## Testing

@@ -15,6 +15,7 @@ const emptyForm = {
 
 function ProductFormPage() {
   const { user } = useAuth()
+  const userRole = user?.role?.trim().toLowerCase()
   const { productId } = useParams()
   const location = useLocation()
   const navigate = useNavigate()
@@ -39,7 +40,7 @@ function ProductFormPage() {
     loadProduct()
   }, [location.state, productId])
 
-  if (user.role !== USER_ROLES.admin) {
+  if (userRole !== USER_ROLES.admin) {
     return <Navigate to="/products" replace />
   }
 
