@@ -46,7 +46,7 @@ class OrderService
                 'exception' => $exception::class,
                 'message' => $exception->getMessage(),
             ]);
-
+            
             throw $exception;
         }
     }
