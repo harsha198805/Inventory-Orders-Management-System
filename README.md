@@ -6,7 +6,7 @@ Mini Inventory and Orders module built as an ERP slice for product management, s
 
 - Backend: Laravel 12, PHP 8.2, Laravel Sanctum, PHPUnit
 - Frontend: React 19, Vite, Axios, React Router
-- Database: SQLite for local development by default, with Laravel migrations for portability to MySQL or PostgreSQL
+- Database: MySQL for XAMPP local development, with migrations that can also run on SQLite or PostgreSQL
 
 ## Project Structure
 
@@ -40,7 +40,8 @@ backend/
 |   |   +-- User.php
 |   |   +-- Product.php
 |   |   +-- Order.php
-|   |   `-- OrderItem.php
+|   |   +-- OrderItem.php
+|   |   `-- AuditLog.php
 |   +-- Services/
 |   |   +-- ProductService.php
 |   |   +-- OrderService.php
@@ -49,6 +50,9 @@ backend/
 |   |   +-- ProductRepository.php
 |   |   +-- OrderRepository.php
 |   |   `-- ReportRepository.php
+|   +-- Exports/
+|   |   +-- LowStockReportExport.php
+|   |   `-- DailyOrdersReportExport.php
 |   `-- Enums/
 |       `-- OrderStatus.php
 +-- database/
@@ -99,7 +103,7 @@ php artisan migrate --seed
 php artisan serve
 ```
 
-By default the project can use `database/database.sqlite`. For MySQL or PostgreSQL, update the database values in `backend/.env` before running migrations.
+For XAMPP MySQL, create a database such as `laravel_erp` and update the database values in `backend/.env` before running migrations.
 
 ### Frontend
 
@@ -138,7 +142,7 @@ php artisan test
 Current result:
 
 ```text
-Tests: 7 passed (24 assertions)
+Tests: 8 passed (32 assertions)
 ```
 
 Run frontend linting:
@@ -157,14 +161,15 @@ npm run build
 
 Recommended backend test coverage:
 
-- Admin can create, update, and delete products
+- Admin can create products
 - Staff cannot manage products
-- Product listing supports pagination and filters
+- Product listing supports search and low-stock filters
 - Confirming an order reduces stock inside a transaction
 - Order confirmation fails when stock is insufficient
-- Cancelled orders cannot reduce stock again
+- Confirming the same order twice does not reduce stock again
 - Low stock report returns products at or below reorder level
 - Daily orders summary returns count and total item quantity
+- Report Excel exports return downloadable `.xlsx` files
 
 ## API Overview
 
@@ -193,6 +198,7 @@ GET    /api/reports/daily-orders/export
 
 - Laravel: Backend framework, routing, validation, ORM, migrations, testing
 - Laravel Sanctum: API authentication
+- Maatwebsite/Laravel-Excel: Excel report exports
 - React: Frontend UI
 - Vite: Frontend build tool and dev server
 - Axios: HTTP client
